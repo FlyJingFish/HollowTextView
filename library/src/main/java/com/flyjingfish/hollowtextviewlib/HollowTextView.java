@@ -16,7 +16,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 public class HollowTextView extends AppCompatTextView {
 
-    private final Drawable backgroundDrawable;
+    private Drawable bgDrawable;
 
     public HollowTextView(@NonNull Context context) {
         this(context, null);
@@ -28,7 +28,7 @@ public class HollowTextView extends AppCompatTextView {
 
     public HollowTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        backgroundDrawable = getBackground();
+        bgDrawable = getBackground();
         setBackground(null);
     }
 
@@ -43,8 +43,31 @@ public class HollowTextView extends AppCompatTextView {
         super.onDraw(canvas);
     }
 
+    @Override
+    public void setBackground(Drawable background) {
+        super.setBackground(background);
+        bgDrawable = getBackground();
+        super.setBackground(null);
+    }
+
+    @Override
+    public void setBackgroundDrawable(@Nullable Drawable background) {
+        super.setBackgroundDrawable(background);
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+        super.setBackgroundColor(color);
+    }
+
+    @Override
+    public void setBackgroundResource(int resId) {
+        super.setBackgroundResource(resId);
+    }
+
+
     private void drawBackground(Canvas canvas) {
-        final Drawable background = backgroundDrawable;
+        final Drawable background = bgDrawable;
         if (background == null) {
             return;
         }
