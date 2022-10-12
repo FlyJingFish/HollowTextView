@@ -1,21 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@mipmap/bg_photo"
     tools:context=".MainActivity">
 
 
     <com.flyjingfish.hollowtextviewlib.HollowTextView
+        android:id="@+id/hollowTextView"
         android:layout_width="300dp"
         android:layout_height="80dp"
         android:text=" Hello World! "
         android:gravity="center"
         android:textStyle="bold"
         android:background="@drawable/bg_hollow"
+        android:layout_centerInParent="true"
         android:textSize="30sp"/>
-</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/setBackgroundColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="setBackgroundColor"/>
+        <Button
+            android:id="@+id/setBackgroundResource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="setBackgroundResource"/>
+        <Button
+            android:id="@+id/setBackgroundDrawable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="setBackgroundDrawable"/>
+        <Button
+            android:id="@+id/setBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="setBackground"/>
+    </LinearLayout>
+</RelativeLayout>

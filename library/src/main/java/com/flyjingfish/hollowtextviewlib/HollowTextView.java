@@ -28,8 +28,6 @@ public class HollowTextView extends AppCompatTextView {
 
     public HollowTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        bgDrawable = getBackground();
-        setBackground(null);
     }
 
     @Override
@@ -45,26 +43,19 @@ public class HollowTextView extends AppCompatTextView {
 
     @Override
     public void setBackground(Drawable background) {
-        super.setBackground(background);
-        bgDrawable = getBackground();
-        super.setBackground(null);
+        bgDrawable = background;
+        invalidate();
     }
 
     @Override
     public void setBackgroundDrawable(@Nullable Drawable background) {
-        super.setBackgroundDrawable(background);
-    }
-
-    @Override
-    public void setBackgroundColor(int color) {
-        super.setBackgroundColor(color);
+        setBackground(background);
     }
 
     @Override
     public void setBackgroundResource(int resId) {
-        super.setBackgroundResource(resId);
+        setBackground(getContext().getResources().getDrawable(resId));
     }
-
 
     private void drawBackground(Canvas canvas) {
         final Drawable background = bgDrawable;
