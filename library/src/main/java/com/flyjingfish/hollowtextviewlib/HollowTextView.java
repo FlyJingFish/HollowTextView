@@ -27,7 +27,7 @@ import java.util.Locale;
 public class HollowTextView extends AppCompatTextView {
 
     private Drawable bgDrawable;
-    private AppCompatTextView backGroundText;
+    private final AppCompatTextView backGroundText;
     private int strokeWidth;
     private int[] gradientStrokeColors;
     private float[] gradientStrokePositions;
