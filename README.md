@@ -4,7 +4,7 @@
 [![](https://jitpack.io/v/FlyJingFish/HollowTextView.svg)](https://jitpack.io/#FlyJingFish/HollowTextView)
 
 
-<img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/Screenshot_20221012_141234.jpg" width="405px" height="842px" alt="show" />
+<img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/Screenshot_20221011_141145.jpg" width="405px" height="842px" alt="show" />
 
 
 ## 第一步，根目录build.gradle
