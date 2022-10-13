@@ -35,6 +35,7 @@ public class HollowTextView extends AppCompatTextView {
     private float strokeAngle;
     private boolean strokeRtlAngle;
     private boolean isRtl;
+    private int strokeTextColor;
 
     public HollowTextView(@NonNull Context context) {
         this(context, null);
@@ -56,7 +57,7 @@ public class HollowTextView extends AppCompatTextView {
         int startStrokeColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_startColor, 0);
         int centerStrokeColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_centerColor, 0);
         int endStrokeColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_endColor, 0);
-        int strokeTextColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_textColor, getCurrentTextColor());
+        strokeTextColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_textColor, getCurrentTextColor());
         strokeAngle = typedArray.getFloat(R.styleable.HollowTextView_hollow_stroke_angle, 0);
         strokeRtlAngle = typedArray.getBoolean(R.styleable.HollowTextView_hollow_stroke_rtl_angle, false);
 
@@ -249,6 +250,16 @@ public class HollowTextView extends AppCompatTextView {
 
     public void setStrokeRtlAngle(boolean strokeRtlAngle) {
         this.strokeRtlAngle = strokeRtlAngle;
+        invalidate();
+    }
+
+    public int getStrokeTextColor() {
+        return strokeTextColor;
+    }
+
+    public void setStrokeTextColor(int strokeTextColor) {
+        this.strokeTextColor = strokeTextColor;
+        backGroundText.setTextColor(strokeTextColor);
         invalidate();
     }
 }
