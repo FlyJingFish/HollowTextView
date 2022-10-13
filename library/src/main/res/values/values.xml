@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HollowTextView"  >
+        <attr name="hollow_stroke_startColor" format="color" />
+        <attr name="hollow_stroke_centerColor" format="color" />
+        <attr name="hollow_stroke_endColor" format="color" />
+        <attr name="hollow_stroke_angle" format="float" />
+        <attr name="hollow_stroke_rtl_angle" format="boolean" />
+
+        <attr name="hollow_stroke_strokeWidth" format="dimension" />
+        <attr name="hollow_stroke_textColor" format="color" />
+    </declare-styleable>
+</resources>

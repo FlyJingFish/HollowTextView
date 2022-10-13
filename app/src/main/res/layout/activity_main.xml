@@ -4,48 +4,121 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/bg_photo"
     tools:context=".MainActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/bg_photo"
+        android:scaleType="centerCrop"/>
 
-
-    <com.flyjingfish.hollowtextviewlib.HollowTextView
-        android:id="@+id/hollowTextView"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
-        android:text=" Hello World! "
+    <LinearLayout
+        android:id="@+id/ll_hollowTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:textStyle="bold"
-        android:background="@drawable/bg_hollow"
-        android:layout_centerInParent="true"
-        android:textSize="30sp"/>
+        android:orientation="vertical">
+        <com.flyjingfish.hollowtextviewlib.HollowTextView
+            android:id="@+id/hollowTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="40dp"
+            android:text="Hello World!"
+            android:gravity="center"
+            android:textStyle="bold|italic"
+            android:background="@drawable/bg_hollow"
+            android:textSize="30sp"/>
+        <com.flyjingfish.hollowtextviewlib.HollowTextView
+            android:id="@+id/hollowTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Hello World! "
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:hollow_stroke_angle="0"
+            app:hollow_stroke_startColor="@color/purple_500"
+            app:hollow_stroke_endColor="@color/teal_200"
+            app:hollow_stroke_strokeWidth="6dp"
+            android:textSize="30sp"/>
+        <com.flyjingfish.hollowtextviewlib.HollowTextView
+            android:id="@+id/hollowTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Hello World! "
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:hollow_stroke_textColor="@color/white"
+            app:hollow_stroke_strokeWidth="6dp"
+            android:textSize="30sp"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:gravity="end"
         android:orientation="vertical">
-        <Button
+        <TextView
             android:id="@+id/setBackgroundColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:layout_marginTop="10dp"
             android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:background="@color/purple_200"
             android:text="setBackgroundColor"/>
-        <Button
+        <TextView
             android:id="@+id/setBackgroundResource"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:textColor="@color/white"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_hollow3"
             android:text="setBackgroundResource"/>
-        <Button
+        <TextView
             android:id="@+id/setBackgroundDrawable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_hollow4"
             android:text="setBackgroundDrawable"/>
-        <Button
+        <TextView
             android:id="@+id/setBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
+            android:paddingHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:paddingVertical="10dp"
+            android:background="@drawable/bg_hollow2"
             android:text="setBackground"/>
+        <TextView
+            android:id="@+id/run_anim"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:paddingHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:paddingVertical="10dp"
+            android:background="@drawable/bg_hollow2"
+            android:text="开始运动"/>
     </LinearLayout>
 </RelativeLayout>
