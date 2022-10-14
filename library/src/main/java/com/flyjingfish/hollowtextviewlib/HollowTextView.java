@@ -226,6 +226,9 @@ public class HollowTextView extends AppCompatTextView {
     public void setGradientStrokeColors(int[] gradientStrokeColors) {
         this.gradientStrokeColors = gradientStrokeColors;
         gradientStrokeColor = gradientStrokeColors != null;
+        if (gradientStrokePositions != null && gradientStrokeColors != null && gradientStrokeColors.length != gradientStrokePositions.length){
+            this.gradientStrokePositions = null;
+        }
         invalidate();
     }
 
