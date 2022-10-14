@@ -113,8 +113,8 @@ public class HollowTextView extends AppCompatTextView {
         textPaint.setXfermode(null);
         canvas.saveLayer(new RectF(0, 0, canvas.getWidth(), canvas.getHeight()), textPaint, Canvas.ALL_SAVE_FLAG);
         drawBackground(canvas);
+        TextPaint backGroundTextPaint = backGroundText.getPaint();
         if (gradientStrokeColor){
-            TextPaint backGroundTextPaint = backGroundText.getPaint();
             float currentAngle = strokeAngle;
             if (strokeRtlAngle && isRtl){
                 currentAngle = - strokeAngle;
@@ -123,6 +123,8 @@ public class HollowTextView extends AppCompatTextView {
 
             @SuppressLint("DrawAllocation") LinearGradient linearGradient = new LinearGradient(xy[0], xy[1], xy[2], xy[3],  gradientStrokeColors, gradientStrokePositions, Shader.TileMode.CLAMP);
             backGroundTextPaint.setShader(linearGradient);
+        }else {
+            backGroundTextPaint.setShader(null);
         }
         backGroundText.draw(canvas);
         textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
@@ -212,6 +214,8 @@ public class HollowTextView extends AppCompatTextView {
 
     public void setStrokeWidth(int strokeWidth) {
         this.strokeWidth = strokeWidth;
+        TextPaint textPaint = backGroundText.getPaint();
+        textPaint.setStrokeWidth(strokeWidth);
         invalidate();
     }
 
@@ -221,7 +225,7 @@ public class HollowTextView extends AppCompatTextView {
 
     public void setGradientStrokeColors(int[] gradientStrokeColors) {
         this.gradientStrokeColors = gradientStrokeColors;
-        gradientStrokeColor = true;
+        gradientStrokeColor = gradientStrokeColors != null;
         invalidate();
     }
 
@@ -260,6 +264,7 @@ public class HollowTextView extends AppCompatTextView {
     public void setStrokeTextColor(int strokeTextColor) {
         this.strokeTextColor = strokeTextColor;
         backGroundText.setTextColor(strokeTextColor);
+        gradientStrokeColor = false;
         invalidate();
     }
 }
