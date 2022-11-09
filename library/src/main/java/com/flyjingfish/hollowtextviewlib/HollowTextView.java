@@ -15,6 +15,8 @@ import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -82,7 +84,13 @@ public class HollowTextView extends AppCompatTextView {
         backGroundText.setText(getText());
         backGroundText.setGravity(getGravity());
         backGroundText.setBackground(null);
+
+        initCompoundDrawables();
+
+        backGroundText.setCompoundDrawablePadding(getCompoundDrawablePadding());
     }
+
+
 
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params) {
@@ -269,5 +277,74 @@ public class HollowTextView extends AppCompatTextView {
         backGroundText.setTextColor(strokeTextColor);
         gradientStrokeColor = false;
         invalidate();
+    }
+
+    @Override
+    public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
+        super.setCompoundDrawables(left, top, right, bottom);
+        initCompoundDrawables();
+    }
+
+    @Override
+    public void setCompoundDrawablesRelative(@Nullable Drawable start, @Nullable Drawable top, @Nullable Drawable end, @Nullable Drawable bottom) {
+        super.setCompoundDrawablesRelative(start, top, end, bottom);
+        initCompoundDrawables();
+    }
+
+    @Override
+    public void setCompoundDrawablePadding(int pad) {
+        super.setCompoundDrawablePadding(pad);
+        if (backGroundText != null){
+            backGroundText.setCompoundDrawablePadding(pad);
+        }
+    }
+
+    private void initCompoundDrawables(){
+        if (backGroundText == null){
+            return;
+        }
+        Drawable[] drawablesRelative = getCompoundDrawablesRelative();
+//        Log.e("drawablesRelative----",(drawablesRelative[0] == null)+"-"+(drawablesRelative[1] == null)+"-"+(drawablesRelative[2] == null)+"-"+(drawablesRelative[3] == null));
+
+        Drawable[] drawables = getCompoundDrawables();
+//        Log.e("drawables----",(drawables[0] == null)+"-"+(drawables[1] == null)+"-"+(drawables[2] == null)+"-"+(drawables[3] == null));
+
+        Drawable drawableLeft;
+        Drawable drawableRight;
+        Drawable drawableTop = null;
+        Drawable drawableBottom = null;
+        if (isRtl){
+            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
+                drawableLeft = drawablesRelative[2];
+                drawableRight = drawablesRelative[0];
+            }else {
+                drawableLeft = drawables[0];
+                drawableRight = drawables[2];
+            }
+
+        }else {
+            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
+                drawableLeft = drawablesRelative[0];
+                drawableRight = drawablesRelative[2];
+            }else {
+                drawableLeft = drawables[0];
+                drawableRight = drawables[2];
+            }
+
+        }
+
+        if (drawablesRelative[1] != null){
+            drawableTop = drawablesRelative[1];
+        }else if (drawables[1] != null){
+            drawableTop = drawables[1];
+        }
+
+        if (drawablesRelative[3] != null){
+            drawableBottom = drawablesRelative[3];
+        }else if (drawables[3] != null){
+            drawableBottom = drawables[3];
+        }
+
+        backGroundText.setCompoundDrawables(drawableLeft,drawableTop,drawableRight,drawableBottom);
     }
 }
