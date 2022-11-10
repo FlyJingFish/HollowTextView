@@ -167,8 +167,9 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     protected float[] getAngleXY(float currentAngle){
-        int height = getHeight();
-        int width = getWidth();
+        int[] paddings = getCompoundDrawablesPaddings();
+        int height = getHeight() - paddings[3] - paddings[1];
+        int width = getWidth() - paddings[2] - paddings[0];
 
         float angle = currentAngle % 360;
         if (angle < 0) {
@@ -189,8 +190,7 @@ public class HollowTextView extends AppCompatTextView {
             y0 = height / 2f * percent + height / 2f;
         } else if (angle <= 180) {
             float percent = (angle - 135) / 45;
-            x0 = width / 2f + width / 2f * percent;
-            ;
+            x0 = width / 2f + width / 2f * (1-percent);
             y0 = height;
         } else if (angle <= 225) {
             float percent = (angle - 180) / 45;
@@ -207,9 +207,9 @@ public class HollowTextView extends AppCompatTextView {
         } else {
             float percent = (angle - 315) / 45;
             x0 = width / 2f * percent;
-            ;
             y0 = 0;
         }
+
         x1 = width - x0;
         y1 = height - y0;
 
@@ -304,10 +304,8 @@ public class HollowTextView extends AppCompatTextView {
             return;
         }
         Drawable[] drawablesRelative = getCompoundDrawablesRelative();
-//        Log.e("drawablesRelative----",(drawablesRelative[0] == null)+"-"+(drawablesRelative[1] == null)+"-"+(drawablesRelative[2] == null)+"-"+(drawablesRelative[3] == null));
 
         Drawable[] drawables = getCompoundDrawables();
-//        Log.e("drawables----",(drawables[0] == null)+"-"+(drawables[1] == null)+"-"+(drawables[2] == null)+"-"+(drawables[3] == null));
 
         Drawable drawableLeft;
         Drawable drawableRight;
@@ -346,5 +344,69 @@ public class HollowTextView extends AppCompatTextView {
         }
 
         backGroundText.setCompoundDrawables(drawableLeft,drawableTop,drawableRight,drawableBottom);
+    }
+
+    private int[] getCompoundDrawablesPaddings(){
+        Drawable[] drawablesRelative = getCompoundDrawablesRelative();
+
+        Drawable[] drawables = getCompoundDrawables();
+
+        Drawable drawableLeft;
+        Drawable drawableRight;
+        Drawable drawableTop = null;
+        Drawable drawableBottom = null;
+        if (isRtl){
+            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
+                drawableLeft = drawablesRelative[2];
+                drawableRight = drawablesRelative[0];
+            }else {
+                drawableLeft = drawables[0];
+                drawableRight = drawables[2];
+            }
+
+        }else {
+            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
+                drawableLeft = drawablesRelative[0];
+                drawableRight = drawablesRelative[2];
+            }else {
+                drawableLeft = drawables[0];
+                drawableRight = drawables[2];
+            }
+
+        }
+
+        if (drawablesRelative[1] != null){
+            drawableTop = drawablesRelative[1];
+        }else if (drawables[1] != null){
+            drawableTop = drawables[1];
+        }
+
+        if (drawablesRelative[3] != null){
+            drawableBottom = drawablesRelative[3];
+        }else if (drawables[3] != null){
+            drawableBottom = drawables[3];
+        }
+
+        int[] paddings = new int[4];
+        paddings[0] = ViewUtils.getViewPaddingLeft(this);
+        paddings[1] = getPaddingTop();
+        paddings[2] = ViewUtils.getViewPaddingRight(this);
+        paddings[3] = getPaddingBottom();
+        int drawablePadding = getCompoundDrawablePadding();
+        if (drawableLeft != null){
+            paddings[0] = drawableLeft.getMinimumWidth()+paddings[0]+drawablePadding;
+        }
+        if (drawableTop != null){
+            paddings[1] = drawableTop.getMinimumWidth()+paddings[1]+drawablePadding;
+        }
+        if (drawableRight != null){
+            paddings[2] = drawableRight.getMinimumWidth()+paddings[2]+drawablePadding;
+        }
+
+        if (drawableBottom != null){
+            paddings[3] = drawableBottom.getMinimumWidth()+paddings[3]+drawablePadding;
+        }
+
+        return paddings;
     }
 }
