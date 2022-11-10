@@ -21,7 +21,7 @@
 
 ```gradle
     dependencies {
-        implementation 'com.github.FlyJingFish:HollowTextView:1.0.4'
+        implementation 'com.github.FlyJingFish:HollowTextView:1.0.5'
     }
 ```
 ## 第三步，使用说明
@@ -79,15 +79,15 @@
 
 ### 属性一览
 
-| attr                      |format|       description       |
-|---------------------------|:---:|:-----------------------:|
-| hollow_stroke_startColor  |color|      字体粗边渐变颜色开始颜色       |
-| hollow_stroke_centerColor |color|      字体粗边渐变颜色中心颜色       |
-| hollow_stroke_endColor    |color|      字体粗边渐变颜色结束颜色       |
-| hollow_stroke_angle       |float|      字体粗边渐变颜色开始角度       |
-| hollow_stroke_rtl_angle   |boolean| 字体粗边渐变颜色开始角度是否支持镜像Rtl适配 |
-| hollow_stroke_strokeWidth |dimension|        字体粗边画笔宽度         |
-| hollow_stroke_textColor   |color|  字体粗边颜色（设置渐变色之后此属性无效）   |
+| attr                      |  format   |       description       |
+|---------------------------|:---------:|:-----------------------:|
+| hollow_stroke_startColor  |   color   |      字体粗边渐变颜色开始颜色       |
+| hollow_stroke_centerColor |   color   |      字体粗边渐变颜色中心颜色       |
+| hollow_stroke_endColor    |   color   |      字体粗边渐变颜色结束颜色       |
+| hollow_stroke_angle       |   float   |      字体粗边渐变颜色开始角度       |
+| hollow_stroke_rtl_angle   |  boolean  | 字体粗边渐变颜色开始角度是否支持镜像Rtl适配 |
+| hollow_stroke_strokeWidth | dimension |        字体粗边画笔宽度         |
+| hollow_stroke_textColor   |   color   |  字体粗边颜色（设置渐变色之后此属性无效）   |
 
 ### 常见问题
 
