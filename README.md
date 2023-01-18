@@ -2,6 +2,10 @@
 ## 镂空TextView，支持渐变色粗边，支持设置背景
 
 [![](https://jitpack.io/v/FlyJingFish/HollowTextView.svg)](https://jitpack.io/#FlyJingFish/HollowTextView)
+[![GitHub stars](https://img.shields.io/github/stars/FlyJingFish/HollowTextView.svg)](https://github.com/FlyJingFish/HollowTextView/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/FlyJingFish/HollowTextView.svg)](https://github.com/FlyJingFish/HollowTextView/network)
+[![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/HollowTextView.svg)](https://github.com/FlyJingFish/HollowTextView/issues)
+[![GitHub license](https://img.shields.io/github/license/FlyJingFish/HollowTextView.svg)](https://github.com/FlyJingFish/HollowTextView/blob/master/LICENSE)
 
 
 <img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/Screenshot_20221013_130230.jpg" width="405px" height="842px" alt="show" />
