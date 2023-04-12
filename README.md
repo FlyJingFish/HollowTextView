@@ -8,7 +8,7 @@
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/HollowTextView.svg)](https://github.com/FlyJingFish/HollowTextView/blob/master/LICENSE)
 
 
-<img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/show1.png" width="405px" height="842px" alt="show" />
+<img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/show1.png" width="320px" height="345px" alt="show" />
 
 
 ## 第一步，根目录build.gradle
