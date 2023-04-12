@@ -8,7 +8,7 @@
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/HollowTextView.svg)](https://github.com/FlyJingFish/HollowTextView/blob/master/LICENSE)
 
 
-<img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/Screenshot_20221013_130230.jpg" width="405px" height="842px" alt="show" />
+<img src="https://github.com/FlyJingFish/HollowTextView/blob/master/screenshot/show1.png" width="405px" height="842px" alt="show" />
 
 
 ## 第一步，根目录build.gradle
@@ -25,7 +25,7 @@
 
 ```gradle
     dependencies {
-        implementation 'com.github.FlyJingFish:HollowTextView:1.0.5'
+        implementation 'com.github.FlyJingFish:HollowTextView:1.0.6'
     }
 ```
 ## 第三步，使用说明
@@ -83,19 +83,17 @@
 
 ### 属性一览
 
-| attr                      |  format   |       description       |
-|---------------------------|:---------:|:-----------------------:|
-| hollow_stroke_startColor  |   color   |      字体粗边渐变颜色开始颜色       |
-| hollow_stroke_centerColor |   color   |      字体粗边渐变颜色中心颜色       |
-| hollow_stroke_endColor    |   color   |      字体粗边渐变颜色结束颜色       |
-| hollow_stroke_angle       |   float   |      字体粗边渐变颜色开始角度       |
-| hollow_stroke_rtl_angle   |  boolean  | 字体粗边渐变颜色开始角度是否支持镜像Rtl适配 |
-| hollow_stroke_strokeWidth | dimension |        字体粗边画笔宽度         |
-| hollow_stroke_textColor   |   color   |  字体粗边颜色（设置渐变色之后此属性无效）   |
+| attr                      |  format   |            description            |
+|---------------------------|:---------:|:---------------------------------:|
+| hollow_stroke_startColor  |   color   |           字体粗边渐变颜色开始颜色            |
+| hollow_stroke_centerColor |   color   |           字体粗边渐变颜色中心颜色            |
+| hollow_stroke_endColor    |   color   |           字体粗边渐变颜色结束颜色            |
+| hollow_stroke_angle       |   float   |           字体粗边渐变颜色开始角度            |
+| hollow_stroke_rtl_angle   |  boolean  |      字体粗边渐变颜色开始角度是否支持镜像Rtl适配      |
+| hollow_stroke_strokeWidth | dimension |             字体粗边画笔宽度              |
+| hollow_stroke_textColor   |   color   |       字体粗边颜色（设置渐变色之后此属性无效）        |
+| hollow_stroke_join        |   enum    | 字体粗边样式 round/bevel/miter 具体效果自行尝试 |
 
-### 常见问题
-
-1，如果使用粗边可能会存在左右两侧被切除一部分，可在字符串两侧添加空格解决问题
 
 
 # 最后推荐我写的另一个库，轻松实现在应用内点击小图查看大图的动画放大效果

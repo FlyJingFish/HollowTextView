@@ -12,7 +12,10 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.text.Layout;
+import android.text.SpannableString;
 import android.text.TextPaint;
+import android.text.style.LeadingMarginSpan;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
 import android.util.Log;
@@ -62,7 +65,7 @@ public class HollowTextView extends AppCompatTextView {
         strokeTextColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_textColor, getCurrentTextColor());
         strokeAngle = typedArray.getFloat(R.styleable.HollowTextView_hollow_stroke_angle, 0);
         strokeRtlAngle = typedArray.getBoolean(R.styleable.HollowTextView_hollow_stroke_rtl_angle, false);
-
+        int strokeJoinInt = typedArray.getInt(R.styleable.HollowTextView_hollow_stroke_join, Paint.Join.ROUND.ordinal());
 
         typedArray.recycle();
 
@@ -84,13 +87,24 @@ public class HollowTextView extends AppCompatTextView {
         backGroundText.setText(getText());
         backGroundText.setGravity(getGravity());
         backGroundText.setBackground(null);
-
+        if (strokeJoinInt >=0 && strokeJoinInt<=2){
+            textPaint.setStrokeJoin(Paint.Join.values()[strokeJoinInt]);
+        }else {
+            textPaint.setStrokeJoin(Paint.Join.ROUND);
+        }
         initCompoundDrawables();
 
         backGroundText.setCompoundDrawablePadding(getCompoundDrawablePadding());
+
+        CharSequence text = getText();
+        setText(text);
     }
 
-
+    static CharSequence createIndentedText(CharSequence text, int marginFirstLine, int marginNextLines) {
+        SpannableString result = new SpannableString(text);
+        result.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
+        return result;
+    }
 
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params) {
@@ -100,12 +114,25 @@ public class HollowTextView extends AppCompatTextView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         CharSequence tt = backGroundText.getText();
         if (tt == null || !tt.equals(this.getText())) {
             backGroundText.setText(getText());
         }
         backGroundText.measure(widthMeasureSpec, heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (widthMode == MeasureSpec.AT_MOST && strokeWidth > 0){
+            int measureWidth = getMeasuredWidth();
+            int width = MeasureSpec.getSize(widthMeasureSpec);
+            if (measureWidth < width){
+                int measureHeight = getMeasuredHeight();
+//                int height = MeasureSpec.getSize(heightMeasureSpec);
+                int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+                backGroundText.measure(widthMeasureSpec, heightMeasureSpec);
+                int newWidth = MeasureSpec.makeMeasureSpec(measureWidth+Math.min(strokeWidth/2,width-measureWidth), widthMode);
+                setMeasuredDimension(newWidth,MeasureSpec.makeMeasureSpec(measureHeight, heightMode));
+            }
+        }
     }
 
     @Override
@@ -167,9 +194,9 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     protected float[] getAngleXY(float currentAngle){
-        int[] paddings = getCompoundDrawablesPaddings();
-        int height = getHeight() - paddings[3] - paddings[1];
-        int width = getWidth() - paddings[2] - paddings[0];
+        Layout layout = getLayout();
+        int height = layout.getHeight();
+        int width = layout.getWidth();
 
         float angle = currentAngle % 360;
         if (angle < 0) {
@@ -214,6 +241,16 @@ public class HollowTextView extends AppCompatTextView {
         y1 = height - y0;
 
         return new float[]{x0, y0, x1, y1};
+    }
+    @Override
+    public void setText(CharSequence text, BufferType type) {
+        if (strokeWidth > 0){
+            text = createIndentedText(text, strokeWidth/2, strokeWidth/2);
+        }
+        if (backGroundText != null){
+            backGroundText.setText(text, type);
+        }
+        super.setText(text, type);
     }
 
     public int getStrokeWidth() {
@@ -345,68 +382,12 @@ public class HollowTextView extends AppCompatTextView {
 
         backGroundText.setCompoundDrawables(drawableLeft,drawableTop,drawableRight,drawableBottom);
     }
-
-    private int[] getCompoundDrawablesPaddings(){
-        Drawable[] drawablesRelative = getCompoundDrawablesRelative();
-
-        Drawable[] drawables = getCompoundDrawables();
-
-        Drawable drawableLeft;
-        Drawable drawableRight;
-        Drawable drawableTop = null;
-        Drawable drawableBottom = null;
-        if (isRtl){
-            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
-                drawableLeft = drawablesRelative[2];
-                drawableRight = drawablesRelative[0];
-            }else {
-                drawableLeft = drawables[0];
-                drawableRight = drawables[2];
-            }
-
-        }else {
-            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
-                drawableLeft = drawablesRelative[0];
-                drawableRight = drawablesRelative[2];
-            }else {
-                drawableLeft = drawables[0];
-                drawableRight = drawables[2];
-            }
-
-        }
-
-        if (drawablesRelative[1] != null){
-            drawableTop = drawablesRelative[1];
-        }else if (drawables[1] != null){
-            drawableTop = drawables[1];
-        }
-
-        if (drawablesRelative[3] != null){
-            drawableBottom = drawablesRelative[3];
-        }else if (drawables[3] != null){
-            drawableBottom = drawables[3];
-        }
-
-        int[] paddings = new int[4];
-        paddings[0] = ViewUtils.getViewPaddingLeft(this);
-        paddings[1] = getPaddingTop();
-        paddings[2] = ViewUtils.getViewPaddingRight(this);
-        paddings[3] = getPaddingBottom();
-        int drawablePadding = getCompoundDrawablePadding();
-        if (drawableLeft != null){
-            paddings[0] = drawableLeft.getMinimumWidth()+paddings[0]+drawablePadding;
-        }
-        if (drawableTop != null){
-            paddings[1] = drawableTop.getMinimumWidth()+paddings[1]+drawablePadding;
-        }
-        if (drawableRight != null){
-            paddings[2] = drawableRight.getMinimumWidth()+paddings[2]+drawablePadding;
-        }
-
-        if (drawableBottom != null){
-            paddings[3] = drawableBottom.getMinimumWidth()+paddings[3]+drawablePadding;
-        }
-
-        return paddings;
+    /**
+     * 请于{@link android.widget.TextView#setText}之前调用，否则不起效果
+     * @param join 粗边样式
+     */
+    public void setStrokeJoin(Paint.Join join){
+        final TextPaint textPaint = backGroundText.getPaint();
+        textPaint.setStrokeJoin(join);
     }
 }
