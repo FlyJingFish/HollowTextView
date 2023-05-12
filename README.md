@@ -25,7 +25,7 @@
 
 ```gradle
     dependencies {
-        implementation 'com.github.FlyJingFish:HollowTextView:1.0.6'
+        implementation 'com.github.FlyJingFish:HollowTextView:1.0.7'
     }
 ```
 ## 第三步，使用说明
