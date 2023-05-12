@@ -2,6 +2,7 @@ package com.flyjingfish.hollowtextviewlib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -32,7 +33,6 @@ import java.util.Locale;
 public class HollowTextView extends AppCompatTextView {
 
     private Drawable bgDrawable;
-    private final AppCompatTextView backGroundText;
     private int strokeWidth;
     private int[] gradientStrokeColors;
     private float[] gradientStrokePositions;
@@ -41,6 +41,7 @@ public class HollowTextView extends AppCompatTextView {
     private boolean strokeRtlAngle;
     private boolean isRtl;
     private int strokeTextColor;
+    private Paint.Join strokeJoin;
 
     public HollowTextView(@NonNull Context context) {
         this(context, null);
@@ -55,7 +56,6 @@ public class HollowTextView extends AppCompatTextView {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             isRtl = TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault()) == LayoutDirection.RTL;
         }
-        backGroundText = new AppCompatTextView(context, attrs, defStyleAttr);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.HollowTextView);
         strokeWidth = typedArray.getDimensionPixelSize(R.styleable.HollowTextView_hollow_stroke_strokeWidth, 0);
@@ -79,22 +79,12 @@ public class HollowTextView extends AppCompatTextView {
         }else {
             gradientStrokeColor = false;
         }
-        
-        TextPaint textPaint = backGroundText.getPaint();
-        textPaint.setStrokeWidth(strokeWidth);
-        textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        backGroundText.setTextColor(strokeTextColor);
-        backGroundText.setText(getText());
-        backGroundText.setGravity(getGravity());
-        backGroundText.setBackground(null);
-        if (strokeJoinInt >=0 && strokeJoinInt<=2){
-            textPaint.setStrokeJoin(Paint.Join.values()[strokeJoinInt]);
-        }else {
-            textPaint.setStrokeJoin(Paint.Join.ROUND);
-        }
-        initCompoundDrawables();
 
-        backGroundText.setCompoundDrawablePadding(getCompoundDrawablePadding());
+        if (strokeJoinInt >=0 && strokeJoinInt<=2){
+            strokeJoin = Paint.Join.values()[strokeJoinInt];
+        }else {
+            strokeJoin = Paint.Join.ROUND;
+        }
 
         CharSequence text = getText();
         setText(text);
@@ -107,19 +97,8 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     @Override
-    public void setLayoutParams(ViewGroup.LayoutParams params) {
-        backGroundText.setLayoutParams(params);
-        super.setLayoutParams(params);
-    }
-
-    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        CharSequence tt = backGroundText.getText();
-        if (tt == null || !tt.equals(this.getText())) {
-            backGroundText.setText(getText());
-        }
-        backGroundText.measure(widthMeasureSpec, heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (widthMode == MeasureSpec.AT_MOST && strokeWidth > 0){
             int measureWidth = getMeasuredWidth();
@@ -128,7 +107,6 @@ public class HollowTextView extends AppCompatTextView {
                 int measureHeight = getMeasuredHeight();
 //                int height = MeasureSpec.getSize(heightMeasureSpec);
                 int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-                backGroundText.measure(widthMeasureSpec, heightMeasureSpec);
                 int newWidth = MeasureSpec.makeMeasureSpec(measureWidth+Math.min(strokeWidth/2,width-measureWidth), widthMode);
                 setMeasuredDimension(newWidth,MeasureSpec.makeMeasureSpec(measureHeight, heightMode));
             }
@@ -136,19 +114,18 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        backGroundText.layout(left, top, right, bottom);
-        super.onLayout(changed, left, top, right, bottom);
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
+        ColorStateList textColor = getTextColors();
         TextPaint textPaint = getPaint();
+        Paint.Style oldStyle = textPaint.getStyle();
         textPaint.setColor(Color.BLACK);
         textPaint.setXfermode(null);
         canvas.saveLayer(new RectF(0, 0, canvas.getWidth(), canvas.getHeight()), textPaint, Canvas.ALL_SAVE_FLAG);
         drawBackground(canvas);
-        TextPaint backGroundTextPaint = backGroundText.getPaint();
+        textPaint.setStrokeWidth(strokeWidth);
+        textPaint.setStrokeJoin(strokeJoin);
+        textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        setTextColor(strokeTextColor);
         if (gradientStrokeColor){
             float currentAngle = strokeAngle;
             if (strokeRtlAngle && isRtl){
@@ -157,11 +134,18 @@ public class HollowTextView extends AppCompatTextView {
             float[] xy = getAngleXY(currentAngle);
 
             @SuppressLint("DrawAllocation") LinearGradient linearGradient = new LinearGradient(xy[0], xy[1], xy[2], xy[3],  gradientStrokeColors, gradientStrokePositions, Shader.TileMode.CLAMP);
-            backGroundTextPaint.setShader(linearGradient);
+            textPaint.setShader(linearGradient);
         }else {
-            backGroundTextPaint.setShader(null);
+            textPaint.setShader(null);
         }
-        backGroundText.draw(canvas);
+        super.onDraw(canvas);
+
+        if (textColor != null){
+            setTextColor(textColor);
+        }
+        textPaint.setStyle(oldStyle);
+        textPaint.setStrokeWidth(0);
+        textPaint.setShader(null);
         textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
         super.onDraw(canvas);
     }
@@ -247,9 +231,6 @@ public class HollowTextView extends AppCompatTextView {
         if (strokeWidth > 0){
             text = createIndentedText(text, strokeWidth/2, strokeWidth/2);
         }
-        if (backGroundText != null){
-            backGroundText.setText(text, type);
-        }
         super.setText(text, type);
     }
 
@@ -259,8 +240,6 @@ public class HollowTextView extends AppCompatTextView {
 
     public void setStrokeWidth(int strokeWidth) {
         this.strokeWidth = strokeWidth;
-        TextPaint textPaint = backGroundText.getPaint();
-        textPaint.setStrokeWidth(strokeWidth);
         invalidate();
     }
 
@@ -311,83 +290,15 @@ public class HollowTextView extends AppCompatTextView {
 
     public void setStrokeTextColor(int strokeTextColor) {
         this.strokeTextColor = strokeTextColor;
-        backGroundText.setTextColor(strokeTextColor);
         gradientStrokeColor = false;
         invalidate();
     }
 
-    @Override
-    public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
-        super.setCompoundDrawables(left, top, right, bottom);
-        initCompoundDrawables();
-    }
-
-    @Override
-    public void setCompoundDrawablesRelative(@Nullable Drawable start, @Nullable Drawable top, @Nullable Drawable end, @Nullable Drawable bottom) {
-        super.setCompoundDrawablesRelative(start, top, end, bottom);
-        initCompoundDrawables();
-    }
-
-    @Override
-    public void setCompoundDrawablePadding(int pad) {
-        super.setCompoundDrawablePadding(pad);
-        if (backGroundText != null){
-            backGroundText.setCompoundDrawablePadding(pad);
-        }
-    }
-
-    private void initCompoundDrawables(){
-        if (backGroundText == null){
-            return;
-        }
-        Drawable[] drawablesRelative = getCompoundDrawablesRelative();
-
-        Drawable[] drawables = getCompoundDrawables();
-
-        Drawable drawableLeft;
-        Drawable drawableRight;
-        Drawable drawableTop = null;
-        Drawable drawableBottom = null;
-        if (isRtl){
-            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
-                drawableLeft = drawablesRelative[2];
-                drawableRight = drawablesRelative[0];
-            }else {
-                drawableLeft = drawables[0];
-                drawableRight = drawables[2];
-            }
-
-        }else {
-            if (drawablesRelative[0] != null || drawablesRelative[2] != null){
-                drawableLeft = drawablesRelative[0];
-                drawableRight = drawablesRelative[2];
-            }else {
-                drawableLeft = drawables[0];
-                drawableRight = drawables[2];
-            }
-
-        }
-
-        if (drawablesRelative[1] != null){
-            drawableTop = drawablesRelative[1];
-        }else if (drawables[1] != null){
-            drawableTop = drawables[1];
-        }
-
-        if (drawablesRelative[3] != null){
-            drawableBottom = drawablesRelative[3];
-        }else if (drawables[3] != null){
-            drawableBottom = drawables[3];
-        }
-
-        backGroundText.setCompoundDrawables(drawableLeft,drawableTop,drawableRight,drawableBottom);
-    }
     /**
      * 请于{@link android.widget.TextView#setText}之前调用，否则不起效果
      * @param join 粗边样式
      */
     public void setStrokeJoin(Paint.Join join){
-        final TextPaint textPaint = backGroundText.getPaint();
-        textPaint.setStrokeJoin(join);
+        strokeJoin = join;
     }
 }
