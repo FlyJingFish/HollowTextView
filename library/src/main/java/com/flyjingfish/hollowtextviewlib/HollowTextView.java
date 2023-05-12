@@ -19,9 +19,6 @@ import android.text.TextPaint;
 import android.text.style.LeadingMarginSpan;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -300,5 +297,6 @@ public class HollowTextView extends AppCompatTextView {
      */
     public void setStrokeJoin(Paint.Join join){
         strokeJoin = join;
+        invalidate();
     }
 }
