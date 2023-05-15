@@ -113,7 +113,6 @@ public class HollowTextView extends AppCompatTextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.e("onDraw","-----");
         TextPaint textPaint = getPaint();
         Paint.Style oldStyle = textPaint.getStyle();
         textPaint.setColor(Color.BLACK);
