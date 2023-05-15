@@ -19,6 +19,7 @@ import android.text.TextPaint;
 import android.text.style.LeadingMarginSpan;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -112,17 +113,16 @@ public class HollowTextView extends AppCompatTextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        ColorStateList textColor = getTextColors();
+        Log.e("onDraw","-----");
         TextPaint textPaint = getPaint();
         Paint.Style oldStyle = textPaint.getStyle();
         textPaint.setColor(Color.BLACK);
         textPaint.setXfermode(null);
-        canvas.saveLayer(new RectF(0, 0, canvas.getWidth(), canvas.getHeight()), textPaint, Canvas.ALL_SAVE_FLAG);
+        canvas.saveLayer(new RectF(0, 0, getWidth(), getHeight()), textPaint, Canvas.ALL_SAVE_FLAG);
         drawBackground(canvas);
         textPaint.setStrokeWidth(strokeWidth);
         textPaint.setStrokeJoin(strokeJoin);
         textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        setTextColor(strokeTextColor);
         if (gradientStrokeColor){
             float currentAngle = strokeAngle;
             if (strokeRtlAngle && isRtl){
@@ -133,13 +133,11 @@ public class HollowTextView extends AppCompatTextView {
             @SuppressLint("DrawAllocation") LinearGradient linearGradient = new LinearGradient(xy[0], xy[1], xy[2], xy[3],  gradientStrokeColors, gradientStrokePositions, Shader.TileMode.CLAMP);
             textPaint.setShader(linearGradient);
         }else {
-            textPaint.setShader(null);
+            @SuppressLint("DrawAllocation") LinearGradient linearGradient = new LinearGradient(0, 0, getWidth(), getHeight(),  new int[]{strokeTextColor,strokeTextColor}, null, Shader.TileMode.CLAMP);
+            textPaint.setShader(linearGradient);
         }
         super.onDraw(canvas);
 
-        if (textColor != null){
-            setTextColor(textColor);
-        }
         textPaint.setStyle(oldStyle);
         textPaint.setStrokeWidth(0);
         textPaint.setShader(null);
