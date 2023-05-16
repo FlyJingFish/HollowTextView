@@ -142,7 +142,7 @@ public class HollowTextView extends AppCompatTextView {
         }
     }
 
-    private void updateColors(){
+    private boolean updateColors(){
         boolean inval = false;
         final int[] drawableState = getDrawableState();
         int color = strokeTextColor.getColorForState(drawableState, 0);
@@ -181,6 +181,7 @@ public class HollowTextView extends AppCompatTextView {
         if (inval){
             invalidate();
         }
+        return inval;
     }
 
     @SuppressLint("DrawAllocation")
@@ -339,14 +340,15 @@ public class HollowTextView extends AppCompatTextView {
                 gradientStrokeColorStates.add(ColorStateList.valueOf(Color.TRANSPARENT));
             }
             gradientStrokeColor = gradientStrokeColorStates.size() > 0;
-            if (gradientStrokePositions != null && gradientStrokeColors.length != gradientStrokePositions.length){
+            if (gradientStrokePositions != null && gradientStrokeColorStates.size() != gradientStrokePositions.length){
                 this.gradientStrokePositions = null;
             }
             updateColors();
         }else {
             gradientStrokeColor = false;
-            updateColors();
-            invalidate();
+            if (!updateColors()){
+                invalidate();
+            }
         }
     }
 
