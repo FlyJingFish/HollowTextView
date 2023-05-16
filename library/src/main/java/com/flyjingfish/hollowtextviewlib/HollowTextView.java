@@ -319,30 +319,21 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     public void setGradientStrokeColors(@Nullable @ColorInt int[] gradientStrokeColors) {
-        gradientStrokeColorStates.clear();
+        ColorStateList[] colorStateLists;
         if (gradientStrokeColors != null){
-            for (int gradientStrokeColor : gradientStrokeColors) {
-                ColorStateList gradientColor = ColorStateList.valueOf(gradientStrokeColor);
-                gradientStrokeColorStates.add(gradientColor);
+            colorStateLists = new ColorStateList[gradientStrokeColors.length];
+            for (int i = 0; i < gradientStrokeColors.length; i++) {
+                colorStateLists[i] = ColorStateList.valueOf(gradientStrokeColors[i]);
             }
-            if (gradientStrokeColorStates.size() == 1){
-                gradientStrokeColorStates.add(ColorStateList.valueOf(Color.TRANSPARENT));
-            }
-            gradientStrokeColor = gradientStrokeColorStates.size() > 0;
-            if (gradientStrokePositions != null && gradientStrokeColors.length != gradientStrokePositions.length){
-                this.gradientStrokePositions = null;
-            }
-            updateColors();
         }else {
-            gradientStrokeColor = false;
-            updateColors();
-            invalidate();
+            colorStateLists = null;
         }
+        setGradientStrokeColors(colorStateLists);
     }
 
     public void setGradientStrokeColors(@Nullable ColorStateList[] colorStateLists) {
         gradientStrokeColorStates.clear();
-        if (gradientStrokeColors != null){
+        if (colorStateLists != null){
             gradientStrokeColorStates.addAll(Arrays.asList(colorStateLists));
             if (gradientStrokeColorStates.size() == 1){
                 gradientStrokeColorStates.add(ColorStateList.valueOf(Color.TRANSPARENT));
@@ -395,9 +386,7 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     public void setStrokeTextColor(@ColorInt int strokeTextColor) {
-        this.strokeTextColor = ColorStateList.valueOf(strokeTextColor);
-        gradientStrokeColor = false;
-        updateColors();
+        setStrokeTextColors(ColorStateList.valueOf(strokeTextColor));
     }
 
     public void setStrokeTextColors(ColorStateList strokeTextColor) {
