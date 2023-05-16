@@ -218,16 +218,6 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-    }
-
-    @Override
-    public void setPressed(boolean pressed) {
-        super.setPressed(pressed);
-    }
-
-    @Override
     public void setBackground(Drawable background) {
         bgDrawable = background;
         invalidate();
