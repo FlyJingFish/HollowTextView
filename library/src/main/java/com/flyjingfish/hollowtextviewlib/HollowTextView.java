@@ -19,13 +19,16 @@ import android.text.TextPaint;
 import android.text.style.LeadingMarginSpan;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
-import android.util.Log;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.text.TextUtilsCompat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class HollowTextView extends AppCompatTextView {
@@ -33,13 +36,16 @@ public class HollowTextView extends AppCompatTextView {
     private Drawable bgDrawable;
     private int strokeWidth;
     private int[] gradientStrokeColors;
+    private final List<ColorStateList> gradientStrokeColorStates = new ArrayList<>();
     private float[] gradientStrokePositions;
     private boolean gradientStrokeColor;
     private float strokeAngle;
     private boolean strokeRtlAngle;
     private boolean isRtl;
-    private int strokeTextColor;
+    private ColorStateList strokeTextColor;
+    private int curStrokeTextColor;
     private Paint.Join strokeJoin;
+    private final PorterDuffXfermode DST_OUT = new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
 
     public HollowTextView(@NonNull Context context) {
         this(context, null);
@@ -57,26 +63,34 @@ public class HollowTextView extends AppCompatTextView {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.HollowTextView);
         strokeWidth = typedArray.getDimensionPixelSize(R.styleable.HollowTextView_hollow_stroke_strokeWidth, 0);
-        int startStrokeColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_startColor, 0);
-        int centerStrokeColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_centerColor, 0);
-        int endStrokeColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_endColor, 0);
-        strokeTextColor = typedArray.getColor(R.styleable.HollowTextView_hollow_stroke_textColor, getCurrentTextColor());
+        ColorStateList startStrokeColorState = typedArray.getColorStateList(R.styleable.HollowTextView_hollow_stroke_startColor);
+        ColorStateList centerStrokeColorState = typedArray.getColorStateList(R.styleable.HollowTextView_hollow_stroke_centerColor);
+        ColorStateList endStrokeColorState = typedArray.getColorStateList(R.styleable.HollowTextView_hollow_stroke_endColor);
+        strokeTextColor = typedArray.getColorStateList(R.styleable.HollowTextView_hollow_stroke_textColor);
         strokeAngle = typedArray.getFloat(R.styleable.HollowTextView_hollow_stroke_angle, 0);
         strokeRtlAngle = typedArray.getBoolean(R.styleable.HollowTextView_hollow_stroke_rtl_angle, false);
         int strokeJoinInt = typedArray.getInt(R.styleable.HollowTextView_hollow_stroke_join, Paint.Join.ROUND.ordinal());
 
         typedArray.recycle();
 
-        if (startStrokeColor != 0 || centerStrokeColor != 0 || endStrokeColor != 0){
-            if (centerStrokeColor != 0) {
-                gradientStrokeColors = new int[]{startStrokeColor, centerStrokeColor, endStrokeColor};
-            } else {
-                gradientStrokeColors = new int[]{startStrokeColor, endStrokeColor};
-            }
-            gradientStrokeColor = true;
-        }else {
-            gradientStrokeColor = false;
+        if (strokeTextColor == null){
+            strokeTextColor = getTextColors();
         }
+
+        if (startStrokeColorState != null){
+            gradientStrokeColorStates.add(startStrokeColorState);
+        }
+        if (centerStrokeColorState != null){
+            gradientStrokeColorStates.add(centerStrokeColorState);
+        }
+        if (endStrokeColorState != null){
+            gradientStrokeColorStates.add(endStrokeColorState);
+        }
+        if (gradientStrokeColorStates.size() == 1){
+            gradientStrokeColorStates.add(ColorStateList.valueOf(Color.TRANSPARENT));
+        }
+        gradientStrokeColor = gradientStrokeColorStates.size() > 0;
+        updateColors();
 
         if (strokeJoinInt >=0 && strokeJoinInt<=2){
             strokeJoin = Paint.Join.values()[strokeJoinInt];
@@ -112,16 +126,76 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        updateColors();
+        final int[] state = getDrawableState();
+        boolean changed = false;
+
+        final Drawable bg = bgDrawable;
+        if (bg != null && bg.isStateful()) {
+            changed |= bg.setState(state);
+        }
+
+        if (changed) {
+            invalidate();
+        }
+    }
+
+    private void updateColors(){
+        boolean inval = false;
+        final int[] drawableState = getDrawableState();
+        int color = strokeTextColor.getColorForState(drawableState, 0);
+        if (color != curStrokeTextColor) {
+            curStrokeTextColor = color;
+            inval = true;
+        }
+
+        if (gradientStrokeColorStates != null && gradientStrokeColorStates.size() > 0){
+            int[] gradientColors = new int[gradientStrokeColorStates.size()];
+            for (int i = 0; i < gradientStrokeColorStates.size(); i++) {
+                int gradientColor = gradientStrokeColorStates.get(i).getColorForState(drawableState, 0);
+                gradientColors[i] = gradientColor;
+            }
+            if (gradientStrokeColors == null) {
+                gradientStrokeColors = gradientColors;
+                inval = true;
+            } else if (gradientStrokeColors.length != gradientColors.length){
+                gradientStrokeColors = gradientColors;
+                inval = true;
+            } else {
+                boolean equals = true;
+                for (int i = 0; i < gradientStrokeColors.length; i++) {
+                    if (gradientStrokeColors[i] != gradientColors[i]){
+                        equals = false;
+                        break;
+                    }
+                }
+                if (!equals){
+                    gradientStrokeColors = gradientColors;
+                    inval = true;
+                }
+            }
+        }
+
+        if (inval){
+            invalidate();
+        }
+    }
+
+    @SuppressLint("DrawAllocation")
+    @Override
     protected void onDraw(Canvas canvas) {
         TextPaint textPaint = getPaint();
         Paint.Style oldStyle = textPaint.getStyle();
-        textPaint.setColor(Color.BLACK);
+        textPaint.setColor(getCurrentTextColor());
         textPaint.setXfermode(null);
         canvas.saveLayer(new RectF(0, 0, getWidth(), getHeight()), textPaint, Canvas.ALL_SAVE_FLAG);
         drawBackground(canvas);
         textPaint.setStrokeWidth(strokeWidth);
         textPaint.setStrokeJoin(strokeJoin);
         textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        LinearGradient linearGradient;
         if (gradientStrokeColor){
             float currentAngle = strokeAngle;
             if (strokeRtlAngle && isRtl){
@@ -129,19 +203,28 @@ public class HollowTextView extends AppCompatTextView {
             }
             float[] xy = getAngleXY(currentAngle);
 
-            @SuppressLint("DrawAllocation") LinearGradient linearGradient = new LinearGradient(xy[0], xy[1], xy[2], xy[3],  gradientStrokeColors, gradientStrokePositions, Shader.TileMode.CLAMP);
-            textPaint.setShader(linearGradient);
+            linearGradient = new LinearGradient(xy[0], xy[1], xy[2], xy[3],  gradientStrokeColors, gradientStrokePositions, Shader.TileMode.CLAMP);
         }else {
-            @SuppressLint("DrawAllocation") LinearGradient linearGradient = new LinearGradient(0, 0, getWidth(), getHeight(),  new int[]{strokeTextColor,strokeTextColor}, null, Shader.TileMode.CLAMP);
-            textPaint.setShader(linearGradient);
+            linearGradient = new LinearGradient(0, 0, getWidth(), getHeight(),  new int[]{curStrokeTextColor,curStrokeTextColor}, null, Shader.TileMode.CLAMP);
         }
+        textPaint.setShader(linearGradient);
         super.onDraw(canvas);
 
         textPaint.setStyle(oldStyle);
         textPaint.setStrokeWidth(0);
         textPaint.setShader(null);
-        textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+        textPaint.setXfermode(DST_OUT);
         super.onDraw(canvas);
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+    }
+
+    @Override
+    public void setPressed(boolean pressed) {
+        super.setPressed(pressed);
     }
 
     @Override
@@ -241,13 +324,49 @@ public class HollowTextView extends AppCompatTextView {
         return gradientStrokeColors;
     }
 
-    public void setGradientStrokeColors(int[] gradientStrokeColors) {
-        this.gradientStrokeColors = gradientStrokeColors;
-        gradientStrokeColor = gradientStrokeColors != null;
-        if (gradientStrokePositions != null && gradientStrokeColors != null && gradientStrokeColors.length != gradientStrokePositions.length){
-            this.gradientStrokePositions = null;
+    public List<ColorStateList> getGradientStrokeColorStates() {
+        return gradientStrokeColorStates;
+    }
+
+    public void setGradientStrokeColors(@Nullable @ColorInt int[] gradientStrokeColors) {
+        gradientStrokeColorStates.clear();
+        if (gradientStrokeColors != null){
+            for (int gradientStrokeColor : gradientStrokeColors) {
+                ColorStateList gradientColor = ColorStateList.valueOf(gradientStrokeColor);
+                gradientStrokeColorStates.add(gradientColor);
+            }
+            if (gradientStrokeColorStates.size() == 1){
+                gradientStrokeColorStates.add(ColorStateList.valueOf(Color.TRANSPARENT));
+            }
+            gradientStrokeColor = gradientStrokeColorStates.size() > 0;
+            if (gradientStrokePositions != null && gradientStrokeColors.length != gradientStrokePositions.length){
+                this.gradientStrokePositions = null;
+            }
+            updateColors();
+        }else {
+            gradientStrokeColor = false;
+            updateColors();
+            invalidate();
         }
-        invalidate();
+    }
+
+    public void setGradientStrokeColors(@Nullable ColorStateList[] colorStateLists) {
+        gradientStrokeColorStates.clear();
+        if (gradientStrokeColors != null){
+            gradientStrokeColorStates.addAll(Arrays.asList(colorStateLists));
+            if (gradientStrokeColorStates.size() == 1){
+                gradientStrokeColorStates.add(ColorStateList.valueOf(Color.TRANSPARENT));
+            }
+            gradientStrokeColor = gradientStrokeColorStates.size() > 0;
+            if (gradientStrokePositions != null && gradientStrokeColors.length != gradientStrokePositions.length){
+                this.gradientStrokePositions = null;
+            }
+            updateColors();
+        }else {
+            gradientStrokeColor = false;
+            updateColors();
+            invalidate();
+        }
     }
 
     public float[] getGradientStrokePositions() {
@@ -279,13 +398,22 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     public int getStrokeTextColor() {
+        return curStrokeTextColor;
+    }
+    public ColorStateList getStrokeTextColors() {
         return strokeTextColor;
     }
 
-    public void setStrokeTextColor(int strokeTextColor) {
+    public void setStrokeTextColor(@ColorInt int strokeTextColor) {
+        this.strokeTextColor = ColorStateList.valueOf(strokeTextColor);
+        gradientStrokeColor = false;
+        updateColors();
+    }
+
+    public void setStrokeTextColors(ColorStateList strokeTextColor) {
         this.strokeTextColor = strokeTextColor;
         gradientStrokeColor = false;
-        invalidate();
+        updateColors();
     }
 
     /**

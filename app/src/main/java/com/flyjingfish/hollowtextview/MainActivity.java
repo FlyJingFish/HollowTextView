@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 
@@ -56,7 +56,24 @@ public class MainActivity extends AppCompatActivity {
             }
             isRunAnim = !isRunAnim;
         });
+        binding.demo.setOnClickListener(v -> {
+            if (!isSetDemo){
+                isSetDemo = true;
+                binding.demo.setTextColor(getResources().getColor(R.color.press));
+            }
+        });
+        binding.hollowTextView.setOnClickListener(v -> {});
+        binding.hollowTextView2.setOnClickListener(v -> {
+            if (!isSet2){
+                isSet2 = true;
+                binding.hollowTextView2.setGradientStrokeColors(new ColorStateList[]{getResources().getColorStateList(R.color.press),getResources().getColorStateList(R.color.press)});
+            }
+        });
+        binding.hollowTextView3.setOnClickListener(v -> {});
     }
+
+    boolean isSet2 = false;
+    boolean isSetDemo = false;
 
     @Override
     protected void onDestroy() {

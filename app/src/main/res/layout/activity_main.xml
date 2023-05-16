@@ -34,14 +34,17 @@
             android:id="@+id/hollowTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="40dp"
             android:text="Hello World!"
             android:gravity="center"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             app:hollow_stroke_angle="0"
-            app:hollow_stroke_startColor="@color/purple_500"
-            app:hollow_stroke_endColor="@color/teal_200"
+            app:hollow_stroke_startColor="@color/press_start"
+            app:hollow_stroke_endColor="@color/press_end"
             app:hollow_stroke_strokeWidth="6dp"
+            android:background="@drawable/bg_press"
             android:textSize="30sp"/>
         <com.flyjingfish.hollowtextviewlib.HollowTextView
             android:id="@+id/hollowTextView3"
@@ -52,8 +55,18 @@
             android:gravity="center"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
-            app:hollow_stroke_textColor="@color/white"
+            app:hollow_stroke_textColor="@color/press"
             app:hollow_stroke_strokeWidth="6dp"
+            android:textSize="30sp"/>
+        <TextView
+            android:id="@+id/demo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World!"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/press"
             android:textSize="30sp"/>
     </LinearLayout>
 
