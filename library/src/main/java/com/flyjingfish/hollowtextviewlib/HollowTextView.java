@@ -390,6 +390,9 @@ public class HollowTextView extends AppCompatTextView {
     }
 
     public void setStrokeTextColors(ColorStateList strokeTextColor) {
+        if (strokeTextColor == null){
+            return;
+        }
         this.strokeTextColor = strokeTextColor;
         gradientStrokeColor = false;
         updateColors();
