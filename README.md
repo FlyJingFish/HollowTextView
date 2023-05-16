@@ -83,16 +83,16 @@
 
 ### 属性一览
 
-| attr                      |  format   |            description            |
-|---------------------------|:---------:|:---------------------------------:|
-| hollow_stroke_startColor  |   color   |           字体粗边渐变颜色开始颜色            |
-| hollow_stroke_centerColor |   color   |           字体粗边渐变颜色中心颜色            |
-| hollow_stroke_endColor    |   color   |           字体粗边渐变颜色结束颜色            |
-| hollow_stroke_angle       |   float   |           字体粗边渐变颜色开始角度            |
-| hollow_stroke_rtl_angle   |  boolean  |      字体粗边渐变颜色开始角度是否支持镜像Rtl适配      |
-| hollow_stroke_strokeWidth | dimension |             字体粗边画笔宽度              |
-| hollow_stroke_textColor   |   color   |       字体粗边颜色（设置渐变色之后此属性无效）        |
-| hollow_stroke_join        |   enum    | 字体粗边样式 round/bevel/miter 具体效果自行尝试 |
+| attr                      |     format      |            description            |
+|---------------------------|:---------------:|:---------------------------------:|
+| hollow_stroke_startColor  | color/reference |           字体粗边渐变颜色开始颜色            |
+| hollow_stroke_centerColor | color/reference |           字体粗边渐变颜色中心颜色            |
+| hollow_stroke_endColor    | color/reference |           字体粗边渐变颜色结束颜色            |
+| hollow_stroke_angle       |      float      |           字体粗边渐变颜色开始角度            |
+| hollow_stroke_rtl_angle   |     boolean     |      字体粗边渐变颜色开始角度是否支持镜像Rtl适配      |
+| hollow_stroke_strokeWidth |    dimension    |             字体粗边画笔宽度              |
+| hollow_stroke_textColor   | color/reference | 字体粗边颜色（设置渐变色之后此属性无效,设置此属性后渐变色也失效） |
+| hollow_stroke_join        |      enum       | 字体粗边样式 round/bevel/miter 具体效果自行尝试 |
 
 
 
