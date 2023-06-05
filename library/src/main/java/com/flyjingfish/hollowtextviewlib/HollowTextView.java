@@ -46,6 +46,7 @@ public class HollowTextView extends AppCompatTextView {
     private int curStrokeTextColor;
     private Paint.Join strokeJoin;
     private final PorterDuffXfermode DST_OUT = new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
+    private Float defaultStrokeMiter;
 
     public HollowTextView(@NonNull Context context) {
         this(context, null);
@@ -195,6 +196,14 @@ public class HollowTextView extends AppCompatTextView {
         drawBackground(canvas);
         textPaint.setStrokeWidth(strokeWidth);
         textPaint.setStrokeJoin(strokeJoin);
+        if (defaultStrokeMiter == null){
+            defaultStrokeMiter = textPaint.getStrokeMiter();
+        }
+        if (strokeJoin == Paint.Join.MITER){
+            textPaint.setStrokeMiter(2.6f);
+        }else {
+            textPaint.setStrokeMiter(defaultStrokeMiter);
+        }
         textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         LinearGradient linearGradient;
         if (gradientStrokeColor){
