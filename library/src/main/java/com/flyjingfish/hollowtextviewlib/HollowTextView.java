@@ -206,7 +206,7 @@ public class HollowTextView extends AppCompatTextView {
         }
         textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         LinearGradient linearGradient;
-        if (gradientStrokeColor){
+        if (gradientStrokeColor && gradientStrokeColors != null && gradientStrokeColors.length > 1){
             float currentAngle = strokeAngle;
             if (strokeRtlAngle && isRtl){
                 currentAngle = - strokeAngle;
