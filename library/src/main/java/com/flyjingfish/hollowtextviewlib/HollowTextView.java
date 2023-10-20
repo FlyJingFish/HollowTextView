@@ -103,7 +103,7 @@ public class HollowTextView extends AppCompatTextView {
         setText(text);
     }
 
-    static CharSequence createIndentedText(CharSequence text, int marginFirstLine, int marginNextLines) {
+     static CharSequence createIndentedText(CharSequence text, int marginFirstLine, int marginNextLines) {
         SpannableString result = new SpannableString(text);
         result.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
         return result;
@@ -111,17 +111,14 @@ public class HollowTextView extends AppCompatTextView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         if (widthMode == MeasureSpec.AT_MOST && strokeWidth > 0){
             int measureWidth = getMeasuredWidth();
             int width = MeasureSpec.getSize(widthMeasureSpec);
             if (measureWidth < width){
                 int measureHeight = getMeasuredHeight();
-//                int height = MeasureSpec.getSize(heightMeasureSpec);
-                int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-                int newWidth = MeasureSpec.makeMeasureSpec(measureWidth+Math.min(strokeWidth/2,width-measureWidth), widthMode);
-                setMeasuredDimension(newWidth,MeasureSpec.makeMeasureSpec(measureHeight, heightMode));
+                setMeasuredDimension(measureWidth+Math.min(strokeWidth/2,width-measureWidth),measureHeight);
             }
         }
     }
@@ -264,40 +261,23 @@ public class HollowTextView extends AppCompatTextView {
             angle = 360 + angle;
         }
         float x0, y0, x1, y1;
-        if (angle >= 0 && angle <= 45) {
-            float percent = angle / 45;
-            x0 = width / 2f + width / 2f * percent;
-            y0 = 0;
-        } else if (angle <= 90) {
-            float percent = (angle - 45) / 45;
-            x0 = width;
-            y0 = height / 2f * percent;
-        } else if (angle <= 135) {
-            float percent = (angle - 90) / 45;
-            x0 = width;
-            y0 = height / 2f * percent + height / 2f;
-        } else if (angle <= 180) {
-            float percent = (angle - 135) / 45;
-            x0 = width / 2f + width / 2f * (1-percent);
-            y0 = height;
-        } else if (angle <= 225) {
-            float percent = (angle - 180) / 45;
-            x0 = width / 2f - width / 2f * percent;
-            y0 = height;
-        } else if (angle <= 270) {
-            float percent = (angle - 225) / 45;
-            x0 = 0;
-            y0 = height - height / 2f * percent;
-        } else if (angle <= 315) {
-            float percent = (angle - 270) / 45;
-            x0 = 0;
-            y0 = height / 2f - height / 2f * percent;
-        } else {
-            float percent = (angle - 315) / 45;
-            x0 = width / 2f * percent;
-            y0 = 0;
+        if ((angle >= 0 && angle < 90) || (angle >=180 && angle < 270)){
+            x0 = (float) (width/2 + Math.signum(90 - angle) * height/2f * Math.tan(Math.toRadians(angle - (angle >= 180?180:0))));
+            if (x0 >= width || x0 <= 0){
+                x0 = angle < 90?width:0;
+                y0 = (float) (height/2 - Math.signum(90 - angle) * width/2f * Math.tan(Math.toRadians((angle >= 180?270:90) - angle)));
+            }else {
+                y0 = angle < 90?0:height;
+            }
+        }else {
+            y0 = (float) (height/2f + Math.signum(180 - angle) * width/2f * Math.tan(Math.toRadians(angle - (angle < 180?90:270))));
+            if (y0 >= height || y0 <= 0){
+                y0 = angle < 180?height:0;
+                x0 = (float) (width/2 + Math.signum(180 - angle) * height/2f * Math.tan(Math.toRadians((angle < 180?180:360) - angle)));
+            }else {
+                x0 = angle < 180?width:0;
+            }
         }
-
         x1 = width - x0;
         y1 = height - y0;
 
